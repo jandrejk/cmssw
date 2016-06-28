@@ -1,0 +1,9 @@
+*.[oaP]
+*.so
+*.swo
+*.swp
+*.pyc
+*~
+\#*\#
+*.tar.gz
+CMSSW
