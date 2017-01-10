@@ -7,3 +7,5 @@
 \#*\#
 *.tar.gz
 CMSSW
+__init__.py
+*~
