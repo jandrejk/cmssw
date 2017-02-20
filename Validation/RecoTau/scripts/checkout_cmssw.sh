@@ -16,6 +16,4 @@ git remote add my-tau-pog https://github.com/thomas-mueller/cmssw.git
 git fetch my-tau-pog CMSSW_9_0_X_tau-pog_validation-tools:CMSSW_9_0_X_tau-pog_validation-tools
 git checkout CMSSW_9_0_X_tau-pog_validation-tools
 
-git clone https://gitlab.cern.ch/knutzen/tau_validation_tools.git Validation/tau_validation_tools
-
 scramv1 b -j 8
