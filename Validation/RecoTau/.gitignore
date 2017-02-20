@@ -1,0 +1,11 @@
+*.[oaP]
+*.so
+*.swo
+*.swp
+*.pyc
+*~
+\#*\#
+*.tar.gz
+CMSSW
+__init__.py
+*~
