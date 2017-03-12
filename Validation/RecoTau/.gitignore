@@ -9,3 +9,6 @@
 CMSSW
 __init__.py
 *~
+data/relval_inputs/
+data/relval_skims/
+data/relval_plots/
