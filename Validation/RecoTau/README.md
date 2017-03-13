@@ -12,15 +12,15 @@ rm checkout_cmssw.sh
 ## Download samples
 
 ```bash
-searchAndCopyInputFileFromWeb.py <campaign>
-searchAndCopyInputFileFromWeb.py <[CMSSW_]9_0_0_pre6>
+searchAndCopyInputFileFromWeb.py <campaign> -n <number of processes>
+searchAndCopyInputFileFromWeb.py <[CMSSW_]9_0_0_pre6> -n 8
 ```
 Per default, the outputs are written to `$CMSSW_BASE/src/Validation/RecoTau/data/relval_inputs/<campaign>`.
 
 ## Process samples
 
 ```bash
-skimSamplesInFolder.py <$CMSSW_BASE/src/Validation/RecoTau/data/relval_inputs/CMSSW_9_0_0_pre6_>
+skimSamplesInFolder.py <$CMSSW_BASE/src/Validation/RecoTau/data/relval_inputs/CMSSW_9_0_0_pre6_> -n <number of processes>
 ```
 Per default, the outputs are written to `$CMSSW_BASE/src/Validation/RecoTau/data/relval_skims/<campaign>`.
 
@@ -28,8 +28,13 @@ Per default, the outputs are written to `$CMSSW_BASE/src/Validation/RecoTau/data
 
 ```bash
 makeValPlots.py \
-<$CMSSW_BASE/src/Validation/RecoTau/data/relval_skims/CMSSW_9_0_0_pre6_/DQM_V0001_R000000001__RelValZTT_13__CMSSW_9_0_0_pre6-PU25ns_90X_mcRun2_asymptotic_v4-v1__DQMIO.root> \
-<$CMSSW_BASE/src/Validation/RecoTau/data/relval_skims/CMSSW_9_0_0_pre6_/DQM_V0001_R000000001__RelValZTT_13__CMSSW_9_0_0_pre6-PUpmx25ns_90X_mcRun2_asymptotic_v4-v1__DQMIO.root>
+<$CMSSW_BASE/src/Validation/RecoTau/data/relval_skims/CMSSW_9_0_0_pre6_/DQM_V0001_R000000001__RelValZTT_13__CMSSW_9_0_0_pre6-noPU25ns_90X_mcRun2_asymptotic_v4-v1__DQMIO.root> \
+<$CMSSW_BASE/src/Validation/RecoTau/data/relval_skims/CMSSW_9_0_0_pre6_/DQM_V0001_R000000001__RelValZTT_13__CMSSW_9_0_0_pre6-noPUpmx25ns_90X_mcRun2_asymptotic_v4-v1__DQMIO.root> \
+-n 8 -t 7100
+makeValPlots.py \
+<$CMSSW_BASE/src/Validation/RecoTau/data/relval_skims/CMSSW_9_0_0_pre6_/DQM_V0001_R000000001__RelValZTT_13__CMSSW_9_0_0_pre6-PU25ns_90X_mcRun2_asymptotic_v4_FastSim-v1__DQMIO.root> \
+<$CMSSW_BASE/src/Validation/RecoTau/data/relval_skims/CMSSW_9_0_0_pre6_/DQM_V0001_R000000001__RelValZTT_13__CMSSW_9_0_0_pre6-PUpmx25ns_90X_mcRun2_asymptotic_v4_FastSim-v1__DQMIO.root> \
+-n 8 -t 7100
 ```
 
 
