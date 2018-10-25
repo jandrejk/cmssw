@@ -9,6 +9,7 @@
 #include "CommonTools/Utils/interface/StringObjectFunction.h"
 
 #include <vector>
+#include <iostream>
 #include <boost/ptr_container/ptr_vector.hpp>
 
 template<typename T, typename TProd>
@@ -207,6 +208,22 @@ class EventSingletonSimpleFlatTableProducer : public SimpleFlatTableProducerBase
 };
 
 template<typename T>
+class HTXSTableProducer : public SimpleFlatTableProducerBase<T,T> {
+    public:
+        HTXSTableProducer( edm::ParameterSet const & params ):
+            SimpleFlatTableProducerBase<T,T>(params) {}
+
+        ~HTXSTableProducer() override {}
+
+        std::unique_ptr<nanoaod::FlatTable> fillTable(const edm::Event &, const edm::Handle<T> & prod) const override {
+            auto out = std::make_unique<nanoaod::FlatTable>(1, this->name_, true, this->extension_);
+            std::vector<const T *> selobjs(1, prod.product());
+            for (const auto & var : this->vars_) var.fill(selobjs, *out);
+            return out;
+        }
+};
+
+template<typename T>
 class FirstObjectSimpleFlatTableProducer : public SimpleFlatTableProducerBase<T, edm::View<T>> {
     public:
         FirstObjectSimpleFlatTableProducer( edm::ParameterSet const & params ):
@@ -225,10 +242,15 @@ class FirstObjectSimpleFlatTableProducer : public SimpleFlatTableProducerBase<T,
 #include "DataFormats/Candidate/interface/Candidate.h"
 typedef SimpleFlatTableProducer<reco::Candidate> SimpleCandidateFlatTableProducer;
 
+
+#include "SimDataFormats/HTXS/interface/HiggsTemplateCrossSections.h"
+typedef HTXSTableProducer<HTXS::HiggsClassification> HiggsClassificationTableProducer;
+
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 typedef EventSingletonSimpleFlatTableProducer<GenEventInfoProduct> SimpleGenEventFlatTableProducer;
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(SimpleCandidateFlatTableProducer);
 DEFINE_FWK_MODULE(SimpleGenEventFlatTableProducer);
+DEFINE_FWK_MODULE(HiggsClassificationTableProducer);
 

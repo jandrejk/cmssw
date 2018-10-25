@@ -16,6 +16,20 @@ genParticles2HepMC = cms.EDProducer("GenParticles2HepMCConverter",
     signalParticlePdgIds = cms.vint32(),
 )
 
+myGenerator = cms.EDProducer("GenParticles2HepMCConverter",
+    genParticles = cms.InputTag("mergedGenParticles"),
+    genEventInfo = cms.InputTag("generator"),
+    signalParticlePdgIds = cms.vint32(25), ## for the Higgs analysis
+)
+
+rivetProducerHTXS = cms.EDProducer('HTXSRivetProducer',
+  HepMCCollection = cms.InputTag('myGenerator:unsmeared'),
+  LHERunInfo = cms.InputTag('externalLHEProducer'),
+  #ProductionMode = cms.string('GGF'),
+  ProductionMode = cms.string('AUTO'),
+)
+
+
 particleLevel = cms.EDProducer("ParticleLevelProducer",
     src = cms.InputTag("genParticles2HepMC:unsmeared"),
     
@@ -40,7 +54,25 @@ particleLevel = cms.EDProducer("ParticleLevelProducer",
 )
 
 
+htxsTable = cms.EDProducer("HiggsClassificationTableProducer",
+    src = cms.InputTag("rivetProducerHTXS:HiggsClassification"),
+    name= cms.string("GenHiggs"),
+    doc = cms.string("Dressed leptons from Rivet-based ParticleLevelProducer"),
+    variables = cms.PSet(
+        njets30 =       Var("jets30.size()",int,doc="number fo jets with pt larger 30"),
+        stage1PtJet30 = Var("stage1_cat_pTjet30GeV", int, doc="Stage 1 Higgs classification"),
+        pt =            Var("higgs.Pt()", float, doc="pt of the gen Higgs",precision=-1),        
+        eta =           Var("higgs.eta()",float, doc="eta of the gen Higgs",precision=-1),
+        phi =           Var("higgs.phi()",float, doc="phi of the gen Higgs",precision=-1),
+        mass =             Var("higgs.M()",float,   doc="mass of the gen Higgs",precision=-1),
 
+    )
+)
+# htxsTable = cms.EDProducer("GlobalVariablesTableProducer",
+#     variables = cms.PSet(
+#         htxsclass = ExtVar(cms.InputTag("rivetProducerHTXS:HiggsClassification"),"HTXS::HiggsClassification",doc="mini PF relative isolation, charged component",precision=10),
+#     )
+# )
 ##################### Tables for final output and docs ##########################
 rivetLeptonTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
     src = cms.InputTag("particleLevel:leptons"),
@@ -107,5 +139,8 @@ rivetMetTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
     ),
 )
 
-particleLevelSequence = cms.Sequence(mergedGenParticles + genParticles2HepMC + particleLevel)
+particleLevelSequence = cms.Sequence(mergedGenParticles  + genParticles2HepMC + particleLevel )
 particleLevelTables = cms.Sequence(rivetLeptonTable + rivetMetTable)
+
+htxsSequence = cms.Sequence(myGenerator + rivetProducerHTXS)
+htxsTables = cms.Sequence(htxsTable)

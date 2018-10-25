@@ -1,8 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 from  PhysicsTools.NanoAOD.common_cff import *
 
-
-
 ##################### User floats producers, selectors ##########################
 ## this can be merged with chsFor soft activity if we keep the same selection
 chsForTkMet = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedPFCandidates"), cut = cms.string('charge()!=0 && pvAssociationQuality()>=5 && vertexRef().key()==0'))
@@ -17,7 +15,7 @@ tkMet = cms.EDProducer("PFMETProducer",
 
 ##################### Tables for final output and docs ##########################
 metTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
-    src = cms.InputTag("slimmedMETs"),
+    src = cms.InputTag("slimmedMETsModifiedMET"),
     name = cms.string("MET"),
     doc = cms.string("slimmedMET, type-1 corrected PF MET"),
     singleton = cms.bool(True),  # there's always exactly one MET per event

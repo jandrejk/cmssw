@@ -1933,7 +1933,6 @@ def runMetCorAndUncFromMiniAOD(process, metType="PF",
                                fixEE2017=False,
                                fixEE2017Params=None,
                                postfix=""):
-
     runMETCorrectionsAndUncertainties = RunMETCorrectionsAndUncertainties()
 
     #MET T1 uncertainties
