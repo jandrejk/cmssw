@@ -232,7 +232,8 @@ def setupEgammaPostRecoSeq(process,
                            phoIDModules=_defaultPhoIDModules,
                            runVID=True,
                            applyEPCombBug=False):
-
+    
+    print 'running setupEgammaPostRecoSeq'
     from PhysicsTools.SelectorUtils.tools.vid_id_tools import switchOnVIDElectronIdProducer,switchOnVIDPhotonIdProducer,setupAllVIDIdsInModule,DataFormat,setupVIDElectronSelection,setupVIDPhotonSelection
     # turn on VID producer, indicate data format  to be
     # DataFormat.AOD or DataFormat.MiniAOD, as appropriate

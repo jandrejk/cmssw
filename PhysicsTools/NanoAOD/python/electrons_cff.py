@@ -4,6 +4,7 @@ from Configuration.Eras.Modifier_run2_nanoAOD_92X_cff import run2_nanoAOD_92X
 from Configuration.Eras.Modifier_run2_nanoAOD_94XMiniAODv1_cff import run2_nanoAOD_94XMiniAODv1
 from Configuration.Eras.Modifier_run2_nanoAOD_94XMiniAODv2_cff import run2_nanoAOD_94XMiniAODv2
 from Configuration.Eras.Modifier_run2_nanoAOD_94X2016_cff import run2_nanoAOD_94X2016
+from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
 from PhysicsTools.NanoAOD.common_cff import *
 import PhysicsTools.PatAlgos.producersLayer1.electronProducer_cfi
 from math import ceil,log
@@ -135,6 +136,9 @@ import RecoEgamma.EgammaTools.calibratedEgammas_cff
 calibratedPatElectrons94Xv1 = RecoEgamma.EgammaTools.calibratedEgammas_cff.calibratedPatElectrons.clone(
     produceCalibratedObjs = False
 )
+calibratedPatElectrons94Xv2 = RecoEgamma.EgammaTools.calibratedEgammas_cff.calibratedPatElectrons.clone(
+    produceCalibratedObjs = False
+)
 
 slimmedElectronsWithUserData = cms.EDProducer("PATElectronUserDataEmbedder",
     src = cms.InputTag("slimmedElectrons"),
@@ -151,6 +155,10 @@ slimmedElectronsWithUserData = cms.EDProducer("PATElectronUserDataEmbedder",
         ptRatio = cms.InputTag("ptRatioRelForEle:ptRatio"),
         ptRel = cms.InputTag("ptRatioRelForEle:ptRel"),
         jetNDauChargedMVASel = cms.InputTag("ptRatioRelForEle:jetNDauChargedMVASel"),
+        ecalTrkEnergyPreCorr = cms.InputTag("electronCorrection:ecalTrkEnergyPreCorr"),
+        ecalTrkEnergyPostCorr = cms.InputTag("electronCorrection:ecalTrkEnergyPostCorr"),
+        ecalTrkEnergyErrPreCorr = cms.InputTag("electronCorrection:ecalTrkEnergyErrPreCorr"),
+        ecalTrkEnergyErrPostCorr = cms.InputTag("electronCorrection:ecalTrkEnergyErrPostCorr"),
     ),
     userIntFromBools = cms.PSet(
         mvaFall17Iso_WP90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wp90"),
@@ -202,6 +210,19 @@ run2_nanoAOD_94XMiniAODv1.toModify(slimmedElectronsWithUserData.userFloats,
     ecalTrkEnergyPreCorr     = cms.InputTag("calibratedPatElectrons94Xv1","ecalTrkEnergyPreCorr"),
     ecalTrkEnergyPostCorr    = cms.InputTag("calibratedPatElectrons94Xv1","ecalTrkEnergyPostCorr"),
 )
+
+# run2_nanoAOD_94XMiniAODv2.toModify(slimmedElectronsWithUserData.userFloats,
+#     ecalTrkEnergyErrPreCorr  = cms.InputTag("calibratedPatElectrons94Xv2","ecalTrkEnergyErrPreCorr"),
+#     ecalTrkEnergyErrPostCorr = cms.InputTag("calibratedPatElectrons94Xv2","ecalTrkEnergyErrPostCorr"),
+#     ecalTrkEnergyPreCorr     = cms.InputTag("calibratedPatElectrons94Xv2","ecalTrkEnergyPreCorr"),
+#     ecalTrkEnergyPostCorr    = cms.InputTag("calibratedPatElectrons94Xv2","ecalTrkEnergyPostCorr"),
+#     # ecalTrkEnergyPreCorr = cms.InputTag("electronCorrection:ecalTrkEnergyPreCorr"),
+#     # ecalTrkEnergyPostCorr = cms.InputTag("electronCorrection:ecalTrkEnergyPostCorr"),
+#     # ecalTrkEnergyErrPreCorr = cms.InputTag("electronCorrection:ecalTrkEnergyErrPreCorr"),
+#     # ecalTrkEnergyErrPostCorr = cms.InputTag("electronCorrection:ecalTrkEnergyErrPostCorr"),
+
+# )
+
 run2_miniAOD_80XLegacy.toReplaceWith(slimmedElectronsWithUserData.userIntFromBools,
     cms.PSet(
         mvaSpring16GP_WP90 = cms.InputTag("egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp90"),
@@ -323,12 +344,14 @@ electronTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
     ),
 )
 # scale and smearing only when available
-for modifier in run2_nanoAOD_94XMiniAODv1, run2_nanoAOD_94XMiniAODv2, run2_nanoAOD_94X2016:
-    modifier.toModify(electronTable.variables,
-        pt = Var("pt*userFloat('ecalTrkEnergyPostCorr')/userFloat('ecalTrkEnergyPreCorr')", float, precision=-1, doc="p_{T}"),
-        energyErr = Var("userFloat('ecalTrkEnergyErrPostCorr')", float, precision=6, doc="energy error of the cluster-track combination"),
-        eCorr = Var("userFloat('ecalTrkEnergyPostCorr')/userFloat('ecalTrkEnergyPreCorr')", float, doc="ratio of the calibrated energy/miniaod energy"),
-    )
+
+# for modifier in run2_nanoAOD_94XMiniAODv1, run2_nanoAOD_94XMiniAODv2, run2_nanoAOD_94X2016:
+#     modifier.toModify(electronTable.variables,
+#         pt = Var("pt*userFloat('ecalTrkEnergyPostCorr')/userFloat('ecalTrkEnergyPreCorr')", float, precision=-1, doc="p_{T}"),
+#         energyErr = Var("userFloat('ecalTrkEnergyErrPostCorr')", float, precision=6, doc="energy error of the cluster-track combination"),
+#         eCorr = Var("userFloat('ecalTrkEnergyPostCorr')/userFloat('ecalTrkEnergyPreCorr')", float, doc="ratio of the calibrated energy/miniaod energy"),
+#     )
+
 run2_nanoAOD_94X2016.toModify(electronTable.variables,
     cutBased = Var("userInt('cutbasedID_veto')+userInt('cutbasedID_loose')+userInt('cutbasedID_medium')+userInt('cutbasedID_tight')",int,doc="cut-based Summer16 ID (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)"),
     cutBased17 = Var("electronID('cutBasedElectronID-Fall17-94X-V1-veto')+electronID('cutBasedElectronID-Fall17-94X-V1-loose')+electronID('cutBasedElectronID-Fall17-94X-V1-medium')+electronID('cutBasedElectronID-Fall17-94X-V1-tight')",int,doc="cut-based Fall17 ID (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)"),
@@ -400,7 +423,11 @@ _withUpdateAnd80XScale_sequence = _withUpdate_sequence.copy()
 _withUpdateAnd80XScale_sequence.replace(slimmedElectronsWithUserData, calibratedPatElectrons80X + energyCorrForEle80X + slimmedElectronsWithUserData)
 run2_miniAOD_80XLegacy.toReplaceWith(electronSequence, _withUpdateAnd80XScale_sequence)
 
-_with94Xv1Scale_sequence = electronSequence.copy()
-_with94Xv1Scale_sequence.replace(slimmedElectronsWithUserData, calibratedPatElectrons94Xv1 + slimmedElectronsWithUserData)
-run2_nanoAOD_94XMiniAODv1.toReplaceWith(electronSequence, _with94Xv1Scale_sequence)
+_with94Xv1Scale_sequence_v1 = electronSequence.copy()
+_with94Xv1Scale_sequence_v1.replace(slimmedElectronsWithUserData, calibratedPatElectrons94Xv1 + slimmedElectronsWithUserData)
+run2_nanoAOD_94XMiniAODv1.toReplaceWith(electronSequence, _with94Xv1Scale_sequence_v1)
+
+# _with94Xv1Scale_sequence_v2 = electronSequence.copy()
+# _with94Xv1Scale_sequence_v2.replace(slimmedElectronsWithUserData, calibratedPatElectrons94Xv2 + slimmedElectronsWithUserData)
+# run2_nanoAOD_94XMiniAODv2.toReplaceWith(electronSequence, _with94Xv1Scale_sequence_v2)
 

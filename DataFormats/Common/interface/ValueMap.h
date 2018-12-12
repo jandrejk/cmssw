@@ -15,6 +15,7 @@
 #include <iterator>
 #include <algorithm>
 #include <cstddef>
+#include <iostream>
 
 namespace edm {
   namespace helper {
@@ -131,7 +132,14 @@ namespace edm {
     // raw index of a given (id,key) pair
     size_t rawIndexOf(ProductID id, size_t idx) const {
       typename id_offset_vector::const_iterator f = getIdOffset(id);
-      if(f==ids_.end()) throwNotExisting();
+      std::cout << "id " << id << std::endl;
+      std::cout << "idx " << idx << std::endl;
+      //std::cout << "ids_.end() " << ids_.end() << std::endl;
+      std::cout << "f " << &f << std::endl;
+      
+      if(f==ids_.end()) {
+        throwNotExisting();
+      }
       offset off = f->second;
       size_t j = off+idx;
       if(j >= values_.size()) throwIndexBound();
@@ -212,8 +220,8 @@ namespace edm {
     const id_offset_vector & ids() const { return ids_; }
     /// meant to be used in AssociativeIterator, not by the ordinary user
     const_reference_type get(size_t idx) const { return values_[idx]; }
-    
     //Used by ROOT storage
+    //tExisting
     CMS_CLASS_VERSION(10)
 
   protected:
