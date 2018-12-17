@@ -4,7 +4,7 @@ import copy
 
 unpackedPatTrigger = cms.EDProducer("PATTriggerObjectStandAloneUnpacker",
     patTriggerObjectsStandAlone = cms.InputTag('slimmedPatTrigger'),
-    triggerResults              = cms.InputTag('TriggerResults::HLT'),
+    triggerResults              = cms.InputTag('TriggerResults::SIMembedding'),
     unpackFilterLabels = cms.bool(True)
 )
 # ERA-dependent configuration
