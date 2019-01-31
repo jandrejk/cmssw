@@ -124,7 +124,7 @@ nanoSequence = cms.Sequence(
         nanoMetadata + jetSequence + muonSequence + tauSequence + electronSequence+photonSequence+vertexSequence+metSequence+
         isoTrackSequence + # must be after all the leptons 
         linkedObjects  +
-        jetTables + muonTables + tauTables + electronTables + photonTables +  globalTables +vertexTables+ metTables+simpleCleanerTable + triggerObjectTables + isoTrackTables + genWeightsTable +
+        jetTables + muonTables + tauTables + electronTables + photonTables +  globalTables +vertexTables+ metTables+simpleCleanerTable + triggerObjectTables + isoTrackTables +  genWeightsTable +
 	l1bits)
 
 # nanoSequenceMC = cms.Sequence(genParticleSequence + particleLevelSequence  + nanoSequence + jetMC + muonMC + electronMC + photonMC + tauMC + metMC + ttbarCatMCProducers +  globalTablesMC + btagWeightTable + genWeightsTable + genParticleTables + particleLevelTables  + lheInfoTable  + ttbarCategoryTable )
