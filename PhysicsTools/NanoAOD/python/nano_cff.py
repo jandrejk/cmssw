@@ -137,6 +137,17 @@ for modifier in run2_nanoAOD_94XMiniAODv1, run2_nanoAOD_94XMiniAODv2, run2_nanoA
     modifier.toModify(extraFlagsTable, variables= cms.PSet())
     modifier.toModify(extraFlagsTable, variables = dict(Flag_ecalBadCalibFilterV2 = ExtVar(cms.InputTag("ecalBadCalibFilterNanoTagger"), bool, doc = "Bad ECAL calib flag (updated xtal list)")))
 
+# Add new tau IDs using runTauIdMVA tool
+import RecoTauTag.RecoTau.tools.runTauIdMVA as tauIdConfig
+def nanoAOD_addTauIds(process):
+    updatedTauName = "slimmedTausUpdated"
+    tauIdEmbedder = tauIdConfig.TauIDEmbedder(process, cms, debug = False, updatedTauName = updatedTauName,
+            toKeep = [ "2017v2", "newDM2017v2", "dR0p32017v2", "deepTau2017v2", "againstEle2018" ])
+    tauIdEmbedder.runTauID()
+    process.nanoSequenceCommon.insert(process.nanoSequenceCommon.index(tauSequence),
+            cms.Sequence(process.rerunMvaIsolationSequence + getattr(process, updatedTauName)))
+    return process
+
 from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
 def nanoAOD_addDeepInfo(process,addDeepBTag,addDeepFlavour):
     _btagDiscriminators=[]

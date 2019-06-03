@@ -128,6 +128,22 @@ _variables80X =  cms.PSet(
     _mvaIsoVars2015
 )
 
+_deepTauVars2017v2 = cms.PSet(
+    rawDeepTau2017v2VSe = Var("tauID('byDeepTau2017v2VSeraw')", float,
+                              doc="byDeepTau2017v2VSe raw output discriminator (deepTau2017v2)", precision=10),
+    rawDeepTau2017v2VSmu = Var("tauID('byDeepTau2017v2VSmuraw')", float,
+                               doc="byDeepTau2017v2VSmu raw output discriminator (deepTau2017v2)", precision=10),
+    rawDeepTau2017v2VSjet = Var("tauID('byDeepTau2017v2VSjetraw')", float,
+                                doc="byDeepTau2017v2VSjet raw output discriminator (deepTau2017v2)", precision=10),
+
+    idDeepTau2017v2VSe = _tauId8WPMask("by%sDeepTau2017v2VSe",
+                                       doc="byDeepTau2017v2VSe ID working points (deepTau2017v2)"),
+    idDeepTau2017v2VSmu = _tauId4WPMask("by%sDeepTau2017v2VSmu",
+                                        doc="byDeepTau2017v2VSmu ID working points (deepTau2017v2)"),
+    idDeepTau2017v2VSjet = _tauId8WPMask("by%sDeepTau2017v2VSjet",
+                                         doc="byDeepTau2017v2VSjet ID working points (deepTau2017v2)"),
+)
+
 tauTable.variables=_variablesMiniV2
 
 for era in [eras.run2_nanoAOD_94XMiniAODv1,]:
